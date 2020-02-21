@@ -1,18 +1,19 @@
 <template>
-    <div class="card3D"
+    <div class="tippy-card-full"
         @mousemove="handleMouseMove"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         ref="card">
-        <div class="card3D__inner">
-            <div class="card3D__bg">
+        <div class="tippy-card-full__inner"
+            :style="cardStyle">
+            <div class="tippy-card-full__bg">
                 <Still3d :bg-image="bgImage"
                     :depth-map="depthMap"
                     :x="mouseX"
                     :y="mouseY"
                     :sensitivity="sensitivity" />
             </div>
-            <div class="card3D__info">
+            <div class="tippy-card-full__info">
                 <slot name="header"></slot>
                 <slot name="content"></slot>
             </div>
@@ -24,7 +25,7 @@
 import Still3d from "@/components/Still3d";
 
 export default {
-    name: "TippyCard",
+    name: "TippyCardFull",
     components: {
         Still3d
     },
@@ -48,6 +49,21 @@ export default {
         mouseYEnter: 0,
         mouseLeaveDelay: null
     }),
+    computed: {
+        mousePX() {
+            return this.mouseX / this.width;
+        },
+        mousePY() {
+            return this.mouseY / this.height;
+        },
+        cardStyle() {
+            const rX = this.mousePX * 5;
+            const rY = this.mousePY * -5;
+            return {
+                transform: `rotateY(${rX}deg) rotateX(${rY}deg) translateZ(0)`
+            };
+        }
+    },
     watch: {
         mouseXEnter: function (newVal, oldVal) {
             if (oldVal === 0) {
@@ -111,7 +127,7 @@ export default {
 <style lang="scss" scoped>
 $hoverEasing: cubic-bezier(0.23, 1, 0.32, 1);
 $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
-.card3D {
+.tippy-card-full {
     display: inline-block;
     margin: 10px;
     transform: perspective(400px);
@@ -120,28 +136,30 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
     width: 100%;
 
     &:hover {
-        // .card3D__info {
-        //     transform: translateY(0);
-        // }
-        // .card3D__info p {
-        //     opacity: 1;
-        // }
-        // .card3D__info,
-        // .card3D__info p {
-        //     transition: 0.6s $hoverEasing;
-        // }
-        // .card3D__info:after {
-        //     transition: 1s $hoverEasing;
-        //     opacity: 1;
-        //     transform: translateY(0);
-        // }
-        .card3D__bg {
+        .tippy-card-full__info {
+            transform: translateY(0);
+        }
+        .tippy-card-full__info p {
+            opacity: 1;
+        }
+        .tippy-card-full__info,
+        .tippy-card-full__info p {
+            transition: 0.6s $hoverEasing;
+        }
+        .tippy-card-full__info:after {
+            transition: 1s $hoverEasing;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .tippy-card-full__bg {
             transition: 0.6s $hoverEasing, opacity 1s $hoverEasing;
             opacity: 0.8;
         }
-        .card3D__inner {
+        .tippy-card-full__inner {
             transition: 0.6s $hoverEasing, box-shadow 2s $hoverEasing;
-            box-shadow: rgba(0, 0, 0, 0.66) 0 14px 30px 0;
+            box-shadow: rgba(white, 0.2) 0 0 40px 5px, rgba(white, 1) 0 0 0 1px,
+                rgba(0, 0, 0, 0.66) 0 14px 30px 0, inset #333 0 0 0 5px,
+                inset white 0 0 0 6px;
         }
     }
 
@@ -149,43 +167,72 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
         position: relative;
         flex: 0 0 240px;
         width: 100%;
+        height: 320px;
         background-color: #333;
         overflow: hidden;
         border-radius: 10px;
-        box-shadow: rgba(0, 0, 0, 0.66) 0 14px 30px 0;
-        transition: 1s $returnEasing;
+        box-shadow: rgba(0, 0, 0, 0.66) 0 14px 30px 0, inset #333 0 0 0 5px,
+            inset rgba(white, 0.5) 0 0 0 6px;
+        transition: 0.15s $returnEasing;
     }
 
     &__bg {
-        opacity: 0.6;
-        position: relative;
-        top: 0px;
-        left: 0px;
+        opacity: 0.5;
+        position: absolute;
+        top: -20px;
+        left: -20px;
         width: 100%;
-        height: 340px;
-        padding: 0px;
+        height: 100%;
+        padding: 20px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
         transition: 1s $returnEasing, opacity 1s 0.15s $returnEasing;
         pointer-events: none;
     }
 
     &__info {
         padding: 20px;
-        position: relative;
+        position: absolute;
         bottom: 0;
-        background: #fff;
-        color: #111;
-        transition: 0.6s 0.15s cubic-bezier(0.215, 0.61, 0.355, 1);
+        color: #fff;
+        transform: translateY(40%);
+        transition: 0.6s 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
         width: calc(100% - 40px);
+
+        p {
+            opacity: 0;
+            text-shadow: rgba(black, 1) 0 2px 3px;
+            transition: 0.6s 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
 
         * {
             position: relative;
             z-index: 1;
         }
+
+        &:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(#000, 0.6) 100%
+            );
+            background-blend-mode: overlay;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: 1s 0.15s $returnEasing;
+        }
         h1 {
             font-size: 36px;
             font-weight: 700;
-            // text-shadow: rgba(black, 0.5) 0 10px 10px;
-            margin: 0px;
+            text-shadow: rgba(black, 0.5) 0 10px 10px;
         }
     }
 }
