@@ -4,7 +4,8 @@
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         ref="card">
-        <div class="card3D-full__inner">
+        <div class="card3D-full__inner"
+            :style="{'border-radius': `${borderRadius}px`}">
             <div class="card3D-full__bg">
                 <Still3d :bg-image="bgImage"
                     :depth-map="depthMap"
@@ -37,7 +38,11 @@ export default {
             default: String,
             required: true
         },
-        sensitivity: Number
+        sensitivity: Number,
+        borderRadius: {
+            type: Number,
+            default: 0
+        }
     },
     data: () => ({
         width: 0,
@@ -155,7 +160,6 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
         height: 320px;
         background-color: #333;
         overflow: hidden;
-        border-radius: 10px;
         box-shadow: rgba(0, 0, 0, 0.66) 0 14px 30px 0, inset #333 0 0 0 5px,
             inset rgba(white, 0.5) 0 0 0 6px;
         transition: 1s $returnEasing;

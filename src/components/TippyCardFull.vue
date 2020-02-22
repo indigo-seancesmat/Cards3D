@@ -5,7 +5,7 @@
         @mouseleave="handleMouseLeave"
         ref="card">
         <div class="tippy-card-full__inner"
-            :style="cardStyle">
+            :style="[cardStyle, {'border-radius': `${borderRadius}px`}]">
             <div class="tippy-card-full__bg">
                 <Still3d :bg-image="bgImage"
                     :depth-map="depthMap"
@@ -23,6 +23,7 @@
 
 <script>
 import Still3d from "@/components/Still3d";
+import throttle from "lodash/throttle";
 
 export default {
     name: "TippyCardFull",
@@ -38,7 +39,11 @@ export default {
             default: String,
             required: true
         },
-        sensitivity: Number
+        sensitivity: Number,
+        borderRadius: {
+            type: Number,
+            default: 0
+        }
     },
     data: () => ({
         width: 0,
@@ -97,12 +102,14 @@ export default {
         this.height = this.$refs.card.offsetHeight;
     },
     methods: {
-        handleMouseMove(e) {
+        handleMouseMove: throttle(function (e) {
             if (this.mouseXEnter === 0) {
                 this.mouseX = e.pageX - this.$refs.card.offsetLeft - this.width / 2;
                 this.mouseY = e.pageY - this.$refs.card.offsetTop - this.height / 2;
+                this.throttled++
+                console.log("throttled", this.throttled++);
             }
-        },
+        }, 10),
         handleMouseEnter(e) {
             this.mouseXEnter = e.pageX - this.$refs.card.offsetLeft - this.width / 2;
             this.mouseYEnter = e.pageY - this.$refs.card.offsetTop - this.height / 2;
@@ -170,7 +177,6 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
         height: 320px;
         background-color: #333;
         overflow: hidden;
-        border-radius: 10px;
         box-shadow: rgba(0, 0, 0, 0.66) 0 14px 30px 0, inset #333 0 0 0 5px,
             inset rgba(white, 0.5) 0 0 0 6px;
         transition: 0.15s $returnEasing;

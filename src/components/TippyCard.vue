@@ -1,11 +1,12 @@
 <template>
     <div class="tippy-card"
+        :class="{'tippy-card--info-popup': infoPopup}"
         @mousemove="handleMouseMove"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         ref="card">
         <div class="tippy-card__inner"
-            :style="cardStyle">
+            :style="[cardStyle, {'border-radius': `${borderRadius}px`}]">
             <div class="tippy-card__bg">
                 <Still3d v-if="!xymove"
                     :bg-image="bgImage"
@@ -31,6 +32,7 @@
 <script>
 import Still3d from "@/components/Still3d";
 import Still3dXYMove from "@/components/Still3dXYMove";
+import throttle from "lodash/throttle";
 
 export default {
     name: "tippy-card",
@@ -51,6 +53,14 @@ export default {
         xymove: {
             type: Boolean,
             default: false
+        },
+        borderRadius: {
+            type: Number,
+            default: 0
+        },
+        infoPopup: {
+            type: Boolean,
+            default: false
         }
     },
     data: () => ({
@@ -60,7 +70,8 @@ export default {
         mouseY: 0,
         mouseXEnter: 0,
         mouseYEnter: 0,
-        mouseLeaveDelay: null
+        mouseLeaveDelay: null,
+        throttled: 0
     }),
     computed: {
         mousePX() {
@@ -110,12 +121,24 @@ export default {
         this.height = this.$refs.card.offsetHeight;
     },
     methods: {
-        handleMouseMove(e) {
+        handleMouseMove: throttle(function (e) {
             if (this.mouseXEnter === 0) {
                 this.mouseX = e.pageX - this.$refs.card.offsetLeft - this.width / 2;
                 this.mouseY = e.pageY - this.$refs.card.offsetTop - this.height / 2;
+                this.throttled++
+                console.log("throttled", this.throttled++);
             }
-        },
+        }, 10),
+        // handleMouseMove(e) {
+        //     if (this.mouseXEnter === 0) {
+        //         this.mouseX = e.pageX - this.$refs.card.offsetLeft - this.width / 2;
+        //         this.mouseY = e.pageY - this.$refs.card.offsetTop - this.height / 2;
+        //         this.throttled++
+        //         console.log("throttled", this.throttled++);
+        //         1825
+        //     }
+        // },
+
         handleMouseEnter(e) {
             this.mouseXEnter = e.pageX - this.$refs.card.offsetLeft - this.width / 2;
             this.mouseYEnter = e.pageY - this.$refs.card.offsetTop - this.height / 2;
@@ -149,21 +172,6 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
     width: 100%;
 
     &:hover {
-        // .tippy-card__info {
-        //     transform: translateY(0);
-        // }
-        // .tippy-card__info p {
-        //     opacity: 1;
-        // }
-        // .tippy-card__info,
-        // .tippy-card__info p {
-        //     transition: 0.6s $hoverEasing;
-        // }
-        // .tippy-card__info:after {
-        //     transition: 1s $hoverEasing;
-        //     opacity: 1;
-        //     transform: translateY(0);
-        // }
         .tippy-card__bg {
             transition: 0.6s $hoverEasing, opacity 1s $hoverEasing;
             opacity: 0.8;
@@ -179,7 +187,6 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
         width: 100%;
         background-color: #333;
         overflow: hidden;
-        border-radius: 10px;
         box-shadow: rgba(0, 0, 0, 0.66) 0 14px 30px 0;
         transition: 0.15s $returnEasing;
     }
@@ -200,45 +207,37 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
         padding: 20px;
         position: relative;
         bottom: 0;
+        margin-left: -1px;
         background: #fff;
         color: #111;
         transition: 0.6s 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
-        width: calc(100% - 40px);
-
-        // p {
-        // opacity: 0;
-        // text-shadow: rgba(black, 1) 0 2px 3px;
-        // transition: 0.6s 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
-        // }
+        width: calc(100% - 38px);
 
         * {
             position: relative;
             z-index: 1;
         }
 
-        // &:after {
-        //     content: "";
-        //     position: absolute;
-        //     top: 0;
-        //     left: 0;
-        //     z-index: 0;
-        //     width: 100%;
-        //     height: 100%;
-        //     background-image: linear-gradient(
-        //         to bottom,
-        //         transparent 0%,
-        //         rgba(#000, 0.6) 100%
-        //     );
-        //     background-blend-mode: overlay;
-        //     opacity: 0;
-        //     transform: translateY(100%);
-        //     transition: 1s 0.15s $returnEasing;
-        // }
         h1 {
             font-size: 36px;
             font-weight: 700;
             margin: 0;
             // text-shadow: rgba(black, 0.5) 0 10px 10px;
+        }
+    }
+
+    &--info-popup {
+        &:hover {
+            .tippy-card__info {
+                transform: translateY(0);
+                transition: 0.6s $hoverEasing;
+            }
+        }
+
+        .tippy-card__info {
+            position: absolute;
+            transform: translateY(100%);
+            background: rgba(255, 255, 255, 0.75);
         }
     }
 }

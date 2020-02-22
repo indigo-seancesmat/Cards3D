@@ -83,10 +83,10 @@ export default {
 
         this.ticker = new PIXI.Ticker();
         this.ticker.add(() => {
-            this.img.x = (this.renderer.screen.width / 2) + this.x / (this.sensitivity + 20);
-            this.img.y = (this.renderer.screen.height / 2) + this.y / (this.sensitivity + 20);
-            this.depthMapCont.x = (this.renderer.screen.width / 2) + this.x / (this.sensitivity + 20);
-            this.depthMapCont.y = (this.renderer.screen.height / 2) + this.y / (this.sensitivity + 20);
+            this.img.x = (this.renderer.screen.width / 2) + this.x / (this.sensitivity * 8);
+            this.img.y = (this.renderer.screen.height / 2) + this.y / (this.sensitivity * 8);
+            this.depthMapCont.x = (this.renderer.screen.width / 2) + this.x / (this.sensitivity * 8);
+            this.depthMapCont.y = (this.renderer.screen.height / 2) + this.y / (this.sensitivity * 8);
             this.displacementFilter.scale.x =
                 (this.width / 2 - this.x) / this.sensitivity;
             this.displacementFilter.scale.y =
@@ -112,9 +112,9 @@ export default {
             }
 
             if (this.containerRatio > this.imageRatio) {
-                this.scale = (this.width / this.imgTexture.width) + 0.02;
+                this.scale = (this.width / this.imgTexture.width) + 0.002;
             } else {
-                this.scale = (this.height / this.imgTexture.height + 0.02);
+                this.scale = (this.height / this.imgTexture.height + 0.002);
             }
 
             this.setWidthHeight();

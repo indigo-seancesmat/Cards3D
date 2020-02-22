@@ -1,11 +1,14 @@
 <template>
     <div class="card3D"
+        :class="{'card3D--info-popup': infoPopup}"
         @mousemove="handleMouseMove"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         ref="card">
-        <div class="card3D__inner">
-            <div class="card3D__bg">
+        <div class="card3D__inner"
+            :style="{'border-radius': `${borderRadius}px`}">
+            <div class="
+            card3D__bg">
                 <Still3d :bg-image="bgImage"
                     :depth-map="depthMap"
                     :x="mouseX"
@@ -24,7 +27,7 @@
 import Still3d from "@/components/Still3d";
 
 export default {
-    name: "TippyCard",
+    name: "Card3D",
     components: {
         Still3d
     },
@@ -37,7 +40,15 @@ export default {
             default: String,
             required: true
         },
-        sensitivity: Number
+        sensitivity: Number,
+        borderRadius: {
+            type: Number,
+            default: 0
+        },
+        infoPopup: {
+            type: Boolean,
+            default: false
+        }
     },
     data: () => ({
         width: 0,
@@ -151,7 +162,6 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
         width: 100%;
         background-color: #333;
         overflow: hidden;
-        border-radius: 10px;
         box-shadow: rgba(0, 0, 0, 0.66) 0 14px 30px 0;
         transition: 1s $returnEasing;
     }
@@ -172,10 +182,11 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
         padding: 20px;
         position: relative;
         bottom: 0;
+        margin-left: -1px;
         background: #fff;
         color: #111;
         transition: 0.6s 0.15s cubic-bezier(0.215, 0.61, 0.355, 1);
-        width: calc(100% - 40px);
+        width: calc(100% - 38px);
 
         * {
             position: relative;
@@ -186,6 +197,21 @@ $returnEasing: cubic-bezier(0.445, 0.05, 0.55, 0.95);
             font-weight: 700;
             // text-shadow: rgba(black, 0.5) 0 10px 10px;
             margin: 0px;
+        }
+    }
+
+    &--info-popup {
+        &:hover {
+            .card3D__info {
+                transform: translateY(0);
+                transition: 0.6s $hoverEasing;
+            }
+        }
+
+        .card3D__info {
+            position: absolute;
+            transform: translateY(100%);
+            background: rgba(255, 255, 255, 0.75);
         }
     }
 }
