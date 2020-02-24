@@ -65,7 +65,7 @@ export default {
                 this.$anime({
                     targets: this.$data,
                     easing: "linear",
-                    duration: 150,
+                    duration: 100,
                     mouseX: newVal,
                     complete: () => {
                         this.mouseXEnter = 0;
@@ -78,7 +78,7 @@ export default {
                 this.$anime({
                     targets: this.$data,
                     easing: "linear",
-                    duration: 150,
+                    duration: 100,
                     mouseY: newVal,
                     complete: () => {
                         this.mouseYEnter = 0;
@@ -108,7 +108,7 @@ export default {
                 this.$anime({
                     targets: this.$data,
                     easing: "linear",
-                    duration: 150,
+                    duration: 100,
                     mouseX: 0,
                     mouseY: 0
                 });
